@@ -1,0 +1,45 @@
+version: 1
+send_anonymous_usage_stats: true
+project_id: "target-az-parquet"
+default_environment: test
+environments:
+- name: test
+plugins:
+  extractors:
+  - name: tap-smoke-test
+    variant: meltano
+    pip_url: git+https://github.com/meltano/tap-smoke-test.git
+    config:
+      streams:
+      - stream_name: animals
+        input_filename: https://raw.githubusercontent.com/meltano/tap-smoke-test/main/demo-data/animals-data.jsonl
+  loaders:
+  - name: target-az-parquet
+    namespace: target_az_parquet
+    pip_url: -e .
+    capabilities:
+    - about
+    - stream-maps
+    - record-flattening
+    settings:
+    - name: connection_string
+    - name: account_name
+    - name: destination_path
+    - name: pyarrow_compression_method
+    - name: pyarrow_max_table_size_in_mb
+    - name: pyarrow_partition_cols
+    - name: batch_size_rows
+    config:
+      connection_string: ${TARGET_AZ_PARQUET_CONNECTION_STRING}
+      account_name: ${TARGET_AZ_PARQUET_ACCOUNT_NAME}
+      destination_path: ${TARGET_AZ_PARQUET_DESTINATION_PATH}
+      pyarrow_compression_method: snappy
+      pyarrow_max_table_size_in_mb: 800
+      pyarrow_partition_cols: year,month,day
+      batch_size_rows: 10000
+      validate_records: false
+      stream_maps:
+        "*":
+          year: int(datetime.datetime.strptime(record['created_at'], '%Y-%m-%dT%H:%M:%SZ').year)
+          month: int(datetime.datetime.strptime(record['created_at'], '%Y-%m-%dT%H:%M:%SZ').month)
+          day: int(datetime.datetime.strptime(record['created_at'], '%Y-%m-%dT%H:%M:%SZ').day)

@@ -1,0 +1,8 @@
+{
+    "account_name": "<azure_storage_account_name>",
+    "destination_path": "meltano/output",
+    "pyarrow_compression_method": "snappy",
+    "pyarrow_max_table_size_in_mb": 1,
+    "pyarrow_partition_cols": "year,month,day",
+    "batch_size_rows": 10
+}
