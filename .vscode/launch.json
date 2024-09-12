@@ -9,7 +9,7 @@
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "program": "target_az_parquet",
+            "program": "target_az_parquet/target.py",
             "justMyCode": false,
             "args": [
                 "<",
